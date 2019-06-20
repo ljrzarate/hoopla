@@ -7,6 +7,6 @@ class ApplicationController < ActionController::Base
 
   def get_client
     @hoopla_client = HooplaClient.hoopla_client
-#    @descriptor = HooplaClient.client.get('/', {'Accept' => 'application/vnd.hoopla.api-descriptor+json'})
+    @descriptor = HooplaClient.new.client.get('/', {'Accept' => 'application/vnd.hoopla.api-descriptor+json'})
   end
 end

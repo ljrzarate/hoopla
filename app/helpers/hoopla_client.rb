@@ -27,9 +27,10 @@ class HooplaClient
     descriptor['links'].find { |l| l['rel'] == link }['href'].delete_prefix descriptor['href']
   end
 
-  private
+  #private
 
   def connection
+    binding.pry
     @conn ||= Faraday.new(url: PUBLIC_API_ENDPOINT) do |faraday|
       faraday.response :logger
       faraday.adapter Faraday.default_adapter
@@ -53,7 +54,7 @@ class HooplaClient
       @refresh_token = json_resp['refresh_token']
     else
       if (@token.nil? && @refresh_token.nil?)    # Nothing to retry
-        raise ActiveResource::UnauthorizedAccess
+        #raise ActiveResource::UnauthorizedAccess
       else
         @token = nil
         @refresh_token = nil
