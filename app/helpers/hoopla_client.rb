@@ -2,24 +2,31 @@ require 'faraday'
 require 'faraday_middleware'
 
 class HooplaClient
+  attr_reader :descriptor
+
   CLIENT_ID = ENV['CLIENT_ID']
   CLIENT_SECRET = ENV['CLIENT_SECRET']
   PUBLIC_API_ENDPOINT = 'https://api.hoopla.net'
 
   def initialize
-    descriptor
+    @description = descriptor
   end
 
   def self.hoopla_client
     @@hoopla_client_singleton ||= HooplaClient.new
   end
 
-  def get(relative_url, options)
+  def get(relative_url, options=descriptor_header)
     response = client.get(relative_url, headers: options)
     if response.status == 200
-      JSON.parse(response.body)
-    else
-      raise StandardError('Invalid response from ')
+      JSON.parse(response.body, object_class: OpenStruct)
+    end
+  end
+
+  def put(relative_url, params, headers=metric_value_header)
+    response = client.put(relative_url, params.to_json, headers)
+    if response.status == 200
+      JSON.parse(response.body, object_class: OpenStruct)
     end
   end
 
@@ -29,8 +36,15 @@ class HooplaClient
 
   #private
 
+  def metric_value_header
+    {'Content-Type' => 'application/vnd.hoopla.metric-value+json'}
+  end
+
+  def descriptor_header
+    {'Accept' => 'application/vnd.hoopla.api-descriptor+json'}
+  end
+
   def connection
-    binding.pry
     @conn ||= Faraday.new(url: PUBLIC_API_ENDPOINT) do |faraday|
       faraday.response :logger
       faraday.adapter Faraday.default_adapter
@@ -53,8 +67,8 @@ class HooplaClient
       @token = json_resp['access_token']
       @refresh_token = json_resp['refresh_token']
     else
-      if (@token.nil? && @refresh_token.nil?)    # Nothing to retry
-        #raise ActiveResource::UnauthorizedAccess
+      if (@token.nil? && @refresh_token.nil?)
+        raise ActiveResource::UnauthorizedAccess
       else
         @token = nil
         @refresh_token = nil
@@ -85,16 +99,17 @@ class HooplaClient
     end
   end
 
-  def parse_response(verb, url, response)
+  def parse_response(response)
     if [200, 201].include? response.status
       JSON.parse(response.body)
     else
-      raise StandardError('Invalid response from #{verb} #{url}: #{response.status}: #{response.body')
+      raise StandardError('Invalid response from #{response.status}: #{response.body')
     end
   end
 
-  def descriptor
-    descriptor_url = PUBLIC_API_ENDPOINT
+  def descriptor(decriptor_url=PUBLIC_API_ENDPOINT)
+    descriptor_url = decriptor_url
     @descriptor ||= self.get(descriptor_url, {'Accept' => 'application/vnd.hoopla.api-descriptor+json'})
   end
+
 end

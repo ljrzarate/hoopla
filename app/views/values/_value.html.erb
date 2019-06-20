@@ -1,0 +1,8 @@
+<tr>
+  <td><%= value[:value].value %></td>
+  <%- if value[:user] %>
+    <td><%= link_to(value_owner_name(value[:user]), edit_metric_value_path(metric_id(value[:value].metric), value_id(value[:value]) )) %></td>
+  <%- else %>
+    <td><%= value_owner_name(value[:user]) %></td>
+  <%- end %>
+</tr>

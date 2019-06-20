@@ -1,0 +1,12 @@
+<div class="col-9">
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Name</th>
+      </tr>
+    </thead>
+    <tbody>
+      <%= render(partial: 'metrics/metric', collection: @metrics, as: :metric) %>
+    </tbody>
+  </table>
+</div>

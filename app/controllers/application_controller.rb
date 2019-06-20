@@ -1,12 +1,8 @@
 class ApplicationController < ActionController::Base
-  # Prevent CSRF attacks by raising an exception.
-  # For APIs, you may want to use :null_session instead.
+  include ApplicationHelper
+
   protect_from_forgery with: :exception
-
   before_action :get_client
+  helper_method :metric_id, :value_id, :value_owner_name
 
-  def get_client
-    @hoopla_client = HooplaClient.hoopla_client
-    @descriptor = HooplaClient.new.client.get('/', {'Accept' => 'application/vnd.hoopla.api-descriptor+json'})
-  end
 end

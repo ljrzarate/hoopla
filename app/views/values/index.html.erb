@@ -1,0 +1,17 @@
+<%- if !@values.empty? %>
+  <div class="col-9">
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">Name</th>
+          <th scope="col">Owner</th>
+        </tr>
+      </thead>
+      <tbody>
+        <%= render(partial: 'values/value', collection: @values, as: :value) %>
+      </tbody>
+    </table>
+  </div>
+<%- else %>
+  No values to show
+<%- end %>

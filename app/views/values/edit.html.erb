@@ -1,0 +1,8 @@
+<div class='col-9'>
+  <%= form_for :value, method: :put, url: metric_value_path(metric_id(@value.metric), value_id(@value)) do |f| %>
+    Metric Value: <%= f.text_field :metric_value, value: @value.value %><br />
+    <%= f.submit I18n.t("update"), class: "btn btn-primary" %>
+  <% end %>
+
+
+</div>
